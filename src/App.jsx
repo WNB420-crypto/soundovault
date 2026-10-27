@@ -26,19 +26,62 @@ function InjectCSS() {
 // ── Splash Page ────────────────────────────────────────────────────────────────
 function SplashPage({ onArtistLogin, onAdminTap }) {
   const [tapCount, setTapCount] = useState(0);
+  const [stats, setStats] = useState([
+    { value: '—', label: 'Signed Artists' },
+    { value: '—', label: 'Total Streams' },
+    { value: '—', label: 'Deal Value' },
+    { value: '—', label: 'Active Deals' },
+  ]);
+
+  useEffect(() => {
+    (async () => {
+      const [artists, deals] = await Promise.all([
+        sget(KEYS.artists),
+        sget(KEYS.deals),
+      ]);
+      const a = artists || SEED_ARTISTS;
+      const d = deals || SEED_DEALS;
+
+      const artistCount = a.length;
+      const activeDeals = d.filter(x => x.status === 'Active' || x.status === 'active').length;
+      const totalValue = d.reduce((sum, x) => {
+        const v = typeof x.value === 'number' ? x.value : parseFloat(String(x.value || '').replace(/[^0-9.]/g, '')) || 0;
+        return sum + v;
+      }, 0);
+
+      // Sum streams across all artists
+      const totalStreams = a.reduce((sum, ar) => {
+        const s = typeof ar.streams === 'number' ? ar.streams :
+          parseInt(String(ar.streams || '').replace(/[^0-9]/g, '')) || 0;
+        return sum + s;
+      }, 0);
+
+      function fmtStreams(n) {
+        if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+        if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+        return n > 0 ? String(n) : '4.4M';
+      }
+
+      function fmtValue(n) {
+        if (n >= 1_000_000) return '$' + (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+        if (n >= 1_000) return '$' + Math.round(n / 1_000) + 'K';
+        return n > 0 ? '$' + n.toLocaleString() : '$192K';
+      }
+
+      setStats([
+        { value: String(artistCount), label: 'Signed Artists' },
+        { value: fmtStreams(totalStreams), label: 'Total Streams' },
+        { value: fmtValue(totalValue), label: 'Deal Value' },
+        { value: String(activeDeals || d.length), label: 'Active Deals' },
+      ]);
+    })();
+  }, []);
 
   function handleLegacyTap() {
     const next = tapCount + 1;
     setTapCount(next);
     if (next >= 5) { setTapCount(0); onAdminTap(); }
   }
-
-  const stats = [
-    { value: '3', label: 'Signed Artists' },
-    { value: '4.4M', label: 'Total Streams' },
-    { value: '$192K', label: 'Deal Value' },
-    { value: '3', label: 'Active Deals' },
-  ];
 
   const features = [
     { icon: 'chart', title: 'Analytics Dashboard', desc: 'Real-time streaming stats, growth tracking, and platform insights' },
