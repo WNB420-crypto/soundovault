@@ -101,12 +101,12 @@ function SplashPage({ onArtistLogin, onAdminTap }) {
       </nav>
 
       {/* Hero */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', textAlign: 'center', background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(212,175,55,0.06) 0%, transparent 70%)' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', textAlign: 'center', background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(22,93,255,0.12) 0%, rgba(123,32,249,0.06) 50%, transparent 80%)' }}>
         <div style={{ marginBottom: 32 }}>
           <SoundoVaultLogo size={80} showText={false} />
         </div>
-        <h1 style={{ fontSize: 'clamp(32px,6vw,60px)', fontWeight: 900, letterSpacing: '-.02em', marginBottom: 16, lineHeight: 1.1 }}>
-          <span style={{ background: 'linear-gradient(135deg,#C9972A,#F0C040,#FFE066,#F0C040,#C9972A)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', backgroundSize: '200% auto', animation: 'shimmer 3s linear infinite' }}>SoundoVault</span>
+        <h1 style={{ fontSize: 'clamp(32px,6vw,60px)', fontWeight: 900, letterSpacing: '-.02em', marginBottom: 16, lineHeight: 1.1, fontFamily: "'Space Grotesk','Inter',sans-serif" }}>
+          <span style={{ color: '#F5F7FC' }}>Soundo</span><span style={{ background: 'linear-gradient(135deg,#00D4F5,#165DFF,#7B20F9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Vault</span>
         </h1>
         <p style={{ fontSize: 'clamp(16px,2.5vw,22px)', color: 'var(--text2)', maxWidth: 520, lineHeight: 1.6, marginBottom: 32 }}>
           The premier artist management platform for the next generation of music talent
@@ -121,7 +121,7 @@ function SplashPage({ onArtistLogin, onAdminTap }) {
       <div style={{ display: 'flex', justifyContent: 'center', gap: 0, background: 'var(--bg2)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         {stats.map((s, i) => (
           <div key={i} style={{ flex: 1, textAlign: 'center', padding: '20px 12px', borderRight: i < stats.length - 1 ? '1px solid var(--border)' : 'none', maxWidth: 180 }}>
-            <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--gold)' }}>{s.value}</div>
+            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: "'Space Grotesk',sans-serif", background: 'var(--grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{s.value}</div>
             <div style={{ fontSize: 12, color: 'var(--text2)' }}>{s.label}</div>
           </div>
         ))}
@@ -133,8 +133,8 @@ function SplashPage({ onArtistLogin, onAdminTap }) {
         <div className="grid-3">
           {features.map(f => (
             <div key={f.title} className="card card-hover">
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--gold)22', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                <Icon name={f.icon} size={20} color="var(--gold)" />
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg,rgba(0,212,245,.12),rgba(22,93,255,.08))', border: '1px solid rgba(0,212,245,.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                <Icon name={f.icon} size={20} color="var(--cyan)" />
               </div>
               <div style={{ fontWeight: 700, marginBottom: 6 }}>{f.title}</div>
               <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{f.desc}</div>
@@ -178,7 +178,7 @@ function ArtistLogin({ onLogin, onBack }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(212,175,55,0.05) 0%, transparent 70%)' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(22,93,255,0.1) 0%, transparent 70%)' }}>
       <div style={{ width: '100%', maxWidth: 400 }}>
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
           <SoundoVaultLogo size={48} />
@@ -372,7 +372,7 @@ function ArtistPortal({ artist: initialArtist, onLogout }) {
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'var(--bg2)', borderTop: '1px solid var(--border)', display: 'flex', padding: '8px 0', zIndex: 100 }}>
         {bottomTabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '6px 0', background: 'none', border: 'none', color: tab === t.id ? 'var(--gold)' : 'var(--text3)', cursor: 'pointer', transition: 'color .2s' }}>
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '6px 0', background: 'none', border: 'none', color: tab === t.id ? 'var(--cyan)' : 'var(--text3)', cursor: 'pointer', transition: 'color .2s' }}>
             <Icon name={t.icon} size={20} />
           </button>
         ))}
@@ -401,15 +401,15 @@ function AdminLogin({ onLogin, onBack }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(220,38,38,0.08) 0%, transparent 70%)' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(123,32,249,0.14) 0%, transparent 70%)' }}>
       <div style={{ width: '100%', maxWidth: 380 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <SoundoVaultLogo size={44} />
-          <div style={{ marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--red)22', border: '1px solid var(--red)44', borderRadius: 20, padding: '4px 14px', fontSize: 12, color: 'var(--red2)', fontWeight: 600 }}>
+          <div style={{ marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(123,32,249,.15)', border: '1px solid rgba(123,32,249,.4)', borderRadius: 20, padding: '4px 14px', fontSize: 12, color: '#A855F7', fontWeight: 600 }}>
             <Icon name="shield" size={12} /> ADMIN ACCESS
           </div>
         </div>
-        <div className="card" style={{ padding: 32, borderColor: 'rgba(220,38,38,.2)' }}>
+        <div className="card" style={{ padding: 32, borderColor: 'rgba(123,32,249,.3)' }}>
           <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Admin Login</h2>
           {error && (
             <div style={{ background: 'var(--red)22', border: '1px solid var(--red)44', borderRadius: 8, padding: '10px 14px', fontSize: 14, color: 'var(--red2)', marginBottom: 16 }}>{error}</div>
@@ -425,7 +425,7 @@ function AdminLogin({ onLogin, onBack }) {
               </button>
             </div>
           </Field>
-          <button onClick={login} disabled={loading} className="btn btn-danger w-full" style={{ marginTop: 20, padding: '12px 0', fontSize: 15 }}>
+          <button onClick={login} disabled={loading} className="btn btn-primary w-full" style={{ marginTop: 20, padding: '12px 0', fontSize: 15, background: 'linear-gradient(135deg,#7B20F9,#165DFF)' }}>
             {loading ? 'Authenticating...' : 'Secure Login'}
           </button>
         </div>
@@ -491,11 +491,11 @@ function AdminDashboard({ adminUser, onLogout }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--bg2)', borderBottom: '1px solid rgba(220,38,38,.3)', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--bg2)', borderBottom: '1px solid rgba(123,32,249,.35)', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <button onClick={() => setSidebarOpen(s => !s)} className="btn btn-ghost btn-sm"><Icon name="menu" size={16} /></button>
         <SoundoVaultLogo size={28} />
         <div style={{ flex: 1 }} />
-        <Badge color="var(--red2)">Admin</Badge>
+        <Badge color="#A855F7">Admin</Badge>
         <button onClick={onLogout} className="btn btn-ghost btn-sm"><Icon name="logout" size={14} /></button>
       </div>
 
@@ -503,19 +503,19 @@ function AdminDashboard({ adminUser, onLogout }) {
       {sidebarOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.6)' }} onClick={() => setSidebarOpen(false)} />
-          <div style={{ position: 'relative', width: 220, background: 'var(--bg2)', borderRight: '1px solid rgba(220,38,38,.2)', display: 'flex', flexDirection: 'column', padding: '20px 12px', zIndex: 1, overflowY: 'auto' }}>
+          <div style={{ position: 'relative', width: 220, background: 'var(--bg2)', borderRight: '1px solid rgba(123,32,249,.25)', display: 'flex', flexDirection: 'column', padding: '20px 12px', zIndex: 1, overflowY: 'auto' }}>
             <div style={{ marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
-              <Badge color="var(--red2)">ADMIN — {adminUser}</Badge>
+              <Badge color="#A855F7">ADMIN — {adminUser}</Badge>
             </div>
             {tabs.map(t => (
               <button key={t.id} onClick={() => { setTab(t.id); setSidebarOpen(false); }}
                 className={`nav-link ${tab === t.id ? 'active' : ''}`}
-                style={tab === t.id ? { borderColor: 'rgba(220,38,38,.3)', color: 'var(--red2)' } : {}}>
+                style={tab === t.id ? { borderColor: 'rgba(123,32,249,.35)', color: '#A855F7' } : {}}>
                 <Icon name={t.icon} size={16} /> {t.label}
               </button>
             ))}
             <div style={{ flex: 1 }} />
-            <button onClick={onLogout} className="nav-link" style={{ marginTop: 20, color: 'var(--red2)' }}>
+            <button onClick={onLogout} className="nav-link" style={{ marginTop: 20, color: '#A855F7' }}>
               <Icon name="logout" size={16} /> Logout
             </button>
           </div>
@@ -531,10 +531,10 @@ function AdminDashboard({ adminUser, onLogout }) {
       </div>
 
       {/* Bottom Nav */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'var(--bg2)', borderTop: '1px solid rgba(220,38,38,.2)', display: 'flex', padding: '8px 0', zIndex: 100 }}>
+      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'var(--bg2)', borderTop: '1px solid rgba(123,32,249,.25)', display: 'flex', padding: '8px 0', zIndex: 100 }}>
         {tabs.slice(0, 5).map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '6px 0', background: 'none', border: 'none', color: tab === t.id ? 'var(--red2)' : 'var(--text3)', cursor: 'pointer', transition: 'color .2s' }}>
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '6px 0', background: 'none', border: 'none', color: tab === t.id ? '#A855F7' : 'var(--text3)', cursor: 'pointer', transition: 'color .2s' }}>
             <Icon name={t.icon} size={20} />
           </button>
         ))}

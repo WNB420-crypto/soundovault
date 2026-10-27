@@ -2,18 +2,28 @@ import React, { useState, useEffect, createContext, useContext, useCallback } fr
 
 // ── CSS ──────────────────────────────────────────────────────────────────────
 export const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Cinzel+Decorative:wght@700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a28;--bg4:#222235;
-  --border:#2a2a45;--border2:#3a3a58;
-  --text:#e8e8f0;--text2:#9898b8;--text3:#6868a0;
-  --gold:#d4af37;--gold2:#f0c040;--gold3:#ffe066;
+  /* SoundoVault Brand Colors */
+  --cyan:#00D4F5;--blue:#165DFF;--violet:#7B20F9;
+  --midnight:#080D24;--cloud:#F5F7FC;
+  /* Backgrounds — deep midnight palette */
+  --bg:#060A1E;--bg2:#0B1030;--bg3:#111840;--bg4:#182050;
+  --border:#1E2A5E;--border2:#2A3A7A;
+  /* Text */
+  --text:#F5F7FC;--text2:#8899CC;--text3:#5566AA;
+  /* Accent aliases (keep --gold vars so old refs don't break) */
+  --gold:#00D4F5;--gold2:#165DFF;--gold3:#7B20F9;
+  /* Status */
   --red:#dc2626;--red2:#ef4444;
-  --green:#059669;--blue:#0891b2;--purple:#7c3aed;
+  --green:#059669;--purple:#7B20F9;
   --radius:12px;--radius2:8px;--radius3:16px;
-  --shadow:0 4px 24px rgba(0,0,0,0.4);
-  --shadow2:0 8px 40px rgba(0,0,0,0.6);
+  --shadow:0 4px 24px rgba(0,0,0,0.5);
+  --shadow2:0 8px 40px rgba(0,212,245,0.12);
+  /* Brand gradient */
+  --grad:linear-gradient(135deg,#00D4F5,#165DFF,#7B20F9);
+  --grad-r:linear-gradient(135deg,#7B20F9,#165DFF,#00D4F5);
 }
 html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
 #root{min-height:100vh}
@@ -25,43 +35,44 @@ a{color:inherit;text-decoration:none}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
 @keyframes shimmer{0%{background-position:0% center}100%{background-position:200% center}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideIn{from{transform:translateX(110%)}to{transform:translateX(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes ripple{0%{transform:scale(.8);opacity:1}100%{transform:scale(2);opacity:0}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(0,212,245,.3)}50%{box-shadow:0 0 40px rgba(22,93,255,.5),0 0 60px rgba(123,32,249,.2)}}
 
 .page{animation:fadeIn .3s ease}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
 .card-hover{transition:border-color .2s,transform .2s,box-shadow .2s}
-.card-hover:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius2);border:none;font-size:14px;font-weight:600;transition:all .2s;letter-spacing:.02em}
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000}
-.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.card-hover:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 32px rgba(22,93,255,.2)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius2);border:none;font-size:14px;font-weight:600;transition:all .2s;letter-spacing:.02em;font-family:'Space Grotesk','Inter',sans-serif}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 20px rgba(22,93,255,.35)}
+.btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 6px 28px rgba(22,93,255,.5)}
 .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
-.btn-ghost:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--text);background:rgba(22,93,255,.08)}
 .btn-danger{background:var(--red);color:#fff}
 .btn-danger:hover{background:var(--red2)}
 .btn-sm{padding:6px 12px;font-size:12px}
-.input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius2);color:var(--text);padding:10px 14px;font-size:14px;outline:none;transition:border-color .2s}
-.input:focus{border-color:var(--gold)}
+.input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius2);color:var(--text);padding:10px 14px;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,245,.1)}
 .input::placeholder{color:var(--text3)}
-.label{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;display:block}
+.label{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;display:block;font-family:'Space Grotesk',sans-serif}
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px}
-.stat-val{font-size:28px;font-weight:700;color:var(--text)}
+.stat-val{font-size:28px;font-weight:700;color:var(--text);font-family:'Space Grotesk',sans-serif}
 .stat-label{font-size:12px;color:var(--text2);margin-top:4px}
 .stat-change{font-size:12px;font-weight:600;margin-top:8px}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.nav-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius2);color:var(--text2);font-size:14px;font-weight:500;transition:all .2s;cursor:pointer}
-.nav-link:hover{background:var(--bg3);color:var(--text)}
-.nav-link.active{background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(240,192,64,.08));color:var(--gold);border:1px solid rgba(212,175,55,.2)}
-.tab{padding:8px 16px;border-radius:var(--radius2);font-size:13px;font-weight:600;border:none;background:transparent;color:var(--text2);transition:all .2s;cursor:pointer}
-.tab.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:'Space Grotesk',sans-serif}
+.nav-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius2);color:var(--text2);font-size:14px;font-weight:500;transition:all .2s;cursor:pointer;border:1px solid transparent}
+.nav-link:hover{background:rgba(22,93,255,.08);color:var(--text)}
+.nav-link.active{background:linear-gradient(135deg,rgba(0,212,245,.1),rgba(22,93,255,.08));color:var(--cyan);border-color:rgba(0,212,245,.25)}
+.tab{padding:8px 16px;border-radius:var(--radius2);font-size:13px;font-weight:600;border:none;background:transparent;color:var(--text2);transition:all .2s;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.tab.active{background:var(--bg3);color:var(--cyan);border:1px solid rgba(0,212,245,.3)}
 .tab:hover:not(.active){color:var(--text)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(4px)}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius3);padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-.modal-title{font-size:20px;font-weight:700;margin-bottom:20px}
+.modal-overlay{position:fixed;inset:0;background:rgba(6,10,30,.8);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(8px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius3);padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 60px rgba(22,93,255,.1)}
+.modal-title{font-size:20px;font-weight:700;margin-bottom:20px;font-family:'Space Grotesk',sans-serif}
 .divider{height:1px;background:var(--border);margin:16px 0}
 .empty-state{text-align:center;padding:60px 20px;color:var(--text2)}
 .empty-icon{font-size:48px;margin-bottom:12px;opacity:.4}
@@ -71,15 +82,16 @@ a{color:inherit;text-decoration:none}
 .toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);padding:12px 16px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;box-shadow:var(--shadow2);pointer-events:all;min-width:240px;max-width:320px}
 .toast-success{border-color:var(--green)}
 .toast-error{border-color:var(--red2)}
-.gold-text{background:linear-gradient(135deg,#8B6914,#C9972A,#F0C040,#FFE066,#F0C040,#C9972A,#8B6914);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% auto;animation:shimmer 3s linear infinite}
-.spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
-.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1.2s ease infinite}
+.gold-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% auto;animation:shimmer 3s linear infinite}
+.brand-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 1.2s ease infinite}
 .typing-dot:nth-child(2){animation-delay:.2s}
 .typing-dot:nth-child(3){animation-delay:.4s}
 .ai-msg{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius2);padding:14px 16px;font-size:14px;line-height:1.7;white-space:pre-wrap}
-.ai-msg-user{background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(240,192,64,.06));border-color:rgba(212,175,55,.25);text-align:right;margin-left:40px}
+.ai-msg-user{background:linear-gradient(135deg,rgba(0,212,245,.08),rgba(22,93,255,.05));border-color:rgba(0,212,245,.2);text-align:right;margin-left:40px}
 .progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;transition:width .5s ease}
+.progress-fill{height:100%;background:var(--grad);border-radius:2px;transition:width .5s ease}
 .search-bar{position:relative}
 .search-bar input{padding-left:38px}
 .search-bar-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
@@ -88,7 +100,8 @@ a{color:inherit;text-decoration:none}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 @media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
 .flex{display:flex}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}.mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}
-.w-full{width:100%}.text-sm{font-size:13px}.text-xs{font-size:11px}.font-bold{font-weight:700}.font-semibold{font-weight:600}.text-muted{color:var(--text2)}.text-gold{color:var(--gold)}.text-green{color:var(--green)}.text-red{color:var(--red2)}.text-blue{color:var(--blue)}
+.w-full{width:100%}.text-sm{font-size:13px}.text-xs{font-size:11px}.font-bold{font-weight:700}.font-semibold{font-weight:600}.text-muted{color:var(--text2)}.text-gold{color:var(--cyan)}.text-green{color:var(--green)}.text-red{color:var(--red2)}.text-blue{color:var(--blue)}
+h1,h2,h3,h4{font-family:'Space Grotesk','Inter',sans-serif}
 `;
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -163,43 +176,59 @@ export function Icon({ name, size = 18, color, className = '', strokeWidth = 2 }
 
 // ── Logo ──────────────────────────────────────────────────────────────────────
 export function SoundoVaultLogo({ size = 48, showText = true }) {
+  const uid = 'sv';
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-      <div style={{ width: size, height: size, animation: 'float 4s ease-in-out infinite', flexShrink: 0 }}>
-        <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}
-          style={{ filter: 'drop-shadow(0 0 12px rgba(212,175,55,0.5))' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      {/* Folded ribbon mark — inspired by brand kit */}
+      <div style={{ width: size, height: size, flexShrink: 0, animation: 'float 5s ease-in-out infinite' }}>
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}
+          style={{ filter: 'drop-shadow(0 0 14px rgba(22,93,255,0.55))' }}>
           <defs>
-            <linearGradient id="goldStroke" x1="20" y1="10" x2="140" y2="150" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#8B6914"/>
-              <stop offset="20%" stopColor="#C9972A"/>
-              <stop offset="40%" stopColor="#F5D060"/>
-              <stop offset="50%" stopColor="#FFEEA0"/>
-              <stop offset="60%" stopColor="#F5D060"/>
-              <stop offset="80%" stopColor="#C9972A"/>
-              <stop offset="100%" stopColor="#8B6914"/>
+            <linearGradient id={`${uid}g1`} x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#00D4F5"/>
+              <stop offset="50%" stopColor="#165DFF"/>
+              <stop offset="100%" stopColor="#7B20F9"/>
             </linearGradient>
-            <linearGradient id="goldInner" x1="40" y1="80" x2="120" y2="140" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#C9972A"/>
-              <stop offset="40%" stopColor="#FFE880"/>
-              <stop offset="100%" stopColor="#B8860B"/>
+            <linearGradient id={`${uid}g2`} x1="200" y1="0" x2="0" y2="200" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#7B20F9"/>
+              <stop offset="50%" stopColor="#165DFF"/>
+              <stop offset="100%" stopColor="#00D4F5"/>
+            </linearGradient>
+            <linearGradient id={`${uid}g3`} x1="50" y1="50" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#00D4F5" stopOpacity="0.9"/>
+              <stop offset="100%" stopColor="#165DFF" stopOpacity="0.6"/>
             </linearGradient>
           </defs>
-          <path d="M 128 52 A 55 55 0 1 0 128 108" stroke="url(#goldStroke)" strokeWidth="7" strokeLinecap="round" fill="none"/>
-          <line x1="42" y1="106" x2="42" y2="135" stroke="url(#goldStroke)" strokeWidth="6.5" strokeLinecap="round"/>
-          <line x1="128" y1="108" x2="128" y2="135" stroke="url(#goldStroke)" strokeWidth="6.5" strokeLinecap="round"/>
-          <polyline points="52,92 80,120 108,92" stroke="url(#goldInner)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          {/* Outer ribbon loop — top-left curve */}
+          <path d="M100 30 C60 30 30 60 30 100 C30 125 42 147 62 160 L80 148 C65 138 56 120 56 100 C56 74 74 56 100 56 L100 30Z"
+            fill={`url(#${uid}g1)`} opacity="0.95"/>
+          {/* Outer ribbon loop — bottom-right curve */}
+          <path d="M100 170 C140 170 170 140 170 100 C170 75 158 53 138 40 L120 52 C135 62 144 80 144 100 C144 126 126 144 100 144 L100 170Z"
+            fill={`url(#${uid}g2)`} opacity="0.95"/>
+          {/* Inner V ribbon */}
+          <path d="M68 68 L100 140 L132 68 L118 68 L100 112 L82 68Z"
+            fill={`url(#${uid}g3)`}/>
+          {/* Highlight sheen */}
+          <path d="M100 30 L100 56 C115 56 128 62 137 72 L155 58 C141 42 122 30 100 30Z"
+            fill="#00D4F5" opacity="0.4"/>
         </svg>
       </div>
       {showText && (
         <div>
           <div style={{
-            fontFamily: "'Cinzel Decorative','Cinzel',serif", fontWeight: 700,
-            fontSize: size * 0.45, letterSpacing: '0.18em', textTransform: 'uppercase',
-            background: 'linear-gradient(135deg,#8B6914,#C9972A,#F0C040,#FFE066,#F0C040,#C9972A,#8B6914)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text', backgroundSize: '200% auto', animation: 'shimmer 3s linear infinite',
-          }}>SoundoVault</div>
-          <div style={{ fontSize: size * 0.2, letterSpacing: '0.3em', color: 'var(--gold)', opacity: .7, fontWeight: 600, marginTop: 2 }}>POWERED BY VNC</div>
+            fontFamily: "'Space Grotesk','Inter',sans-serif",
+            fontWeight: 700,
+            fontSize: size * 0.42,
+            letterSpacing: '-0.01em',
+            lineHeight: 1,
+          }}>
+            <span style={{ color: '#F5F7FC' }}>Soundo</span>
+            <span style={{
+              background: 'linear-gradient(135deg,#00D4F5,#165DFF,#7B20F9)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
+            }}>Vault</span>
+          </div>
+          <div style={{ fontSize: size * 0.18, letterSpacing: '0.22em', color: 'var(--text3)', fontWeight: 600, marginTop: 2, textTransform: 'uppercase' }}>POWERED BY VNC</div>
         </div>
       )}
     </div>
