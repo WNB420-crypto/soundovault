@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import BrandLanding from './components/BrandLanding.jsx';
+import WorkspaceShell from './components/WorkspaceShell.jsx';
+import redesignCSS from './components/redesign.css?raw';
+import { parseMetric, formatStreams, formatValue } from './data/metrics.js';
 import { CSS, Icon, SoundoVaultLogo, SoundoVaultNav, ToastProvider, useToast, Badge, Field, Row, formatCurrency } from './components/shared.jsx';
 import { sget, sset, KEYS, SEED_ARTISTS, SEED_DEALS, SEED_INVOICES, ADMIN_USERS, ARTIST_ACCOUNTS } from './data/index.js';
 import {
@@ -16,7 +20,7 @@ import {
 function InjectCSS() {
   useEffect(() => {
     const style = document.createElement('style');
-    style.textContent = CSS;
+    style.textContent = CSS + "\n" + redesignCSS;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
   }, []);
@@ -24,7 +28,7 @@ function InjectCSS() {
 }
 
 // ── Splash Page ────────────────────────────────────────────────────────────────
-function SplashPage({ onArtistLogin, onAdminTap }) {
+function SplashPage({ onArtistLogin, onAdminTap, onApply }) {
   const [tapCount, setTapCount] = useState(0);
   const [stats, setStats] = useState([
     { value: '—', label: 'Signed Artists' },
@@ -49,30 +53,13 @@ function SplashPage({ onArtistLogin, onAdminTap }) {
         return sum + v;
       }, 0);
 
-      // Sum streams across all artists
-      const totalStreams = a.reduce((sum, ar) => {
-        const s = typeof ar.streams === 'number' ? ar.streams :
-          parseInt(String(ar.streams || '').replace(/[^0-9]/g, '')) || 0;
-        return sum + s;
-      }, 0);
-
-      function fmtStreams(n) {
-        if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
-        if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
-        return n > 0 ? String(n) : '4.4M';
-      }
-
-      function fmtValue(n) {
-        if (n >= 1_000_000) return '$' + (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
-        if (n >= 1_000) return '$' + Math.round(n / 1_000) + 'K';
-        return n > 0 ? '$' + n.toLocaleString() : '$192K';
-      }
+      const totalStreams = a.reduce((sum, ar) => sum + parseMetric(ar.streams), 0);
 
       setStats([
         { value: String(artistCount), label: 'Signed Artists' },
-        { value: fmtStreams(totalStreams), label: 'Total Streams' },
-        { value: fmtValue(totalValue), label: 'Deal Value' },
-        { value: String(activeDeals || d.length), label: 'Active Deals' },
+        { value: formatStreams(totalStreams), label: 'Total Streams' },
+        { value: formatValue(totalValue), label: 'Deal Value' },
+        { value: String(activeDeals), label: 'Active Deals' },
       ]);
     })();
   }, []);
@@ -83,73 +70,7 @@ function SplashPage({ onArtistLogin, onAdminTap }) {
     if (next >= 5) { setTapCount(0); onAdminTap(); }
   }
 
-  const features = [
-    { icon: 'chart', title: 'Analytics Dashboard', desc: 'Real-time streaming stats, growth tracking, and platform insights' },
-    { icon: 'briefcase', title: 'Deal Management', desc: 'Track brand deals, bookings, sync licenses, and negotiations' },
-    { icon: 'zap', title: 'AI-Powered Tools', desc: 'Claude AI for content generation, career coaching, and deal scouting' },
-    { icon: 'file', title: 'Contracts & Invoices', desc: 'Manage agreements, track payments, and monitor financial health' },
-    { icon: 'msg', title: 'Direct Messaging', desc: 'Secure communication channel between artists and management' },
-    { icon: 'report', title: 'Weekly Reports', desc: 'AI-generated performance reports delivered every week' },
-  ];
-
-  return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Nav */}
-      <nav style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', background: 'var(--bg2)' }}>
-        <SoundoVaultLogo size={36} />
-        <button onClick={onArtistLogin} className="btn btn-primary">Artist Login</button>
-      </nav>
-
-      {/* Hero */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', textAlign: 'center', background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(22,93,255,0.12) 0%, rgba(123,32,249,0.06) 50%, transparent 80%)' }}>
-        <div style={{ marginBottom: 32 }}>
-          <SoundoVaultLogo size={80} showText={false} />
-        </div>
-        <h1 style={{ fontSize: 'clamp(32px,6vw,60px)', fontWeight: 900, letterSpacing: '-.02em', marginBottom: 16, lineHeight: 1.1, fontFamily: "'Space Grotesk','Inter',sans-serif" }}>
-          <span style={{ color: '#F5F7FC' }}>Soundo</span><span style={{ background: 'linear-gradient(135deg,#00D4F5,#165DFF,#7B20F9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Vault</span>
-        </h1>
-        <p style={{ fontSize: 'clamp(16px,2.5vw,22px)', color: 'var(--text2)', maxWidth: 520, lineHeight: 1.6, marginBottom: 32 }}>
-          The premier artist management platform for the next generation of music talent
-        </p>
-        <button onClick={onArtistLogin} className="btn btn-primary" style={{ fontSize: 16, padding: '14px 32px' }}>
-          <Icon name="music" size={16} /> Access Your Portal
-        </button>
-        <p style={{ marginTop: 12, fontSize: 13, color: 'var(--text3)' }}>Demo: nova@soundovault.com / artist2026</p>
-      </div>
-
-      {/* Stats */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 0, background: 'var(--bg2)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-        {stats.map((s, i) => (
-          <div key={i} style={{ flex: 1, textAlign: 'center', padding: '20px 12px', borderRight: i < stats.length - 1 ? '1px solid var(--border)' : 'none', maxWidth: 180 }}>
-            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: "'Space Grotesk',sans-serif", background: 'var(--grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{s.value}</div>
-            <div style={{ fontSize: 12, color: 'var(--text2)' }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Features */}
-      <div style={{ padding: '48px 24px', maxWidth: 900, margin: '0 auto', width: '100%' }}>
-        <h2 style={{ textAlign: 'center', fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Everything Your Career Needs</h2>
-        <div className="grid-3">
-          {features.map(f => (
-            <div key={f.title} className="card card-hover">
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg,rgba(0,212,245,.12),rgba(22,93,255,.08))', border: '1px solid rgba(0,212,245,.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                <Icon name={f.icon} size={20} color="var(--cyan)" />
-              </div>
-              <div style={{ fontWeight: 700, marginBottom: 6 }}>{f.title}</div>
-              <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{f.desc}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid var(--border)', color: 'var(--text3)', fontSize: 13 }}>
-        <span onClick={handleLegacyTap} style={{ cursor: 'default', userSelect: 'none' }}>LEGACY</span>
-        {' · '}© 2026 SoundoVault · Powered by VNC
-      </div>
-    </div>
-  );
+  return <BrandLanding stats={stats} onArtistLogin={onArtistLogin} onApply={onApply} onLegacy={handleLegacyTap}/>;
 }
 
 // ── Artist Login ───────────────────────────────────────────────────────────────
@@ -236,6 +157,7 @@ function ArtistOnboard({ onComplete }) {
 
   function next() {
     if (!form[current.field]?.trim()) { toast('Please fill in this field', 'error'); return; }
+    if (current.field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { toast('Enter a valid email address', 'error'); return; }
     if (step < steps.length) setStep(s => s + 1);
     else submit();
   }
@@ -266,7 +188,7 @@ function ArtistOnboard({ onComplete }) {
             <input className="input" type={current.type} value={form[current.field]} onChange={e => setForm(f => ({ ...f, [current.field]: e.target.value }))} placeholder={current.placeholder} onKeyDown={e => e.key === 'Enter' && current.type !== 'textarea' && next()} />
           )}
           <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-            {step > 1 && <button onClick={() => setStep(s => s - 1)} className="btn btn-ghost" style={{ flex: 1 }}>Back</button>}
+            <button onClick={() => step > 1 ? setStep(s => s - 1) : onComplete()} className="btn btn-ghost" style={{ flex: 1 }}>{step > 1 ? 'Back' : 'Cancel'}</button>
             <button onClick={next} className="btn btn-primary" style={{ flex: 2 }}>
               {step === steps.length ? 'Submit Application' : 'Next'} <Icon name="chevron_right" size={14} />
             </button>
@@ -325,60 +247,7 @@ function ArtistPortal({ artist: initialArtist, onLogout }) {
     }
   }
 
-  return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--bg2)', borderBottom: '1px solid var(--border)', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button onClick={() => setSidebarOpen(s => !s)} className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }}>
-          <Icon name="menu" size={16} />
-        </button>
-        <SoundoVaultLogo size={28} />
-        <div style={{ flex: 1 }} />
-        <div style={{ width: 36, height: 36, borderRadius: '50%', background: `linear-gradient(135deg,${artist.color},${artist.color}88)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff', fontSize: 14, flexShrink: 0 }}>{artist.name?.[0]}</div>
-      </div>
-
-      {/* Sidebar Overlay */}
-      {sidebarOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.6)' }} onClick={() => setSidebarOpen(false)} />
-          <div style={{ position: 'relative', width: 240, background: 'var(--bg2)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', padding: '20px 12px', zIndex: 1, overflowY: 'auto' }}>
-            <div style={{ marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
-              <SoundoVaultLogo size={28} />
-              <div style={{ marginTop: 12, fontSize: 13, color: 'var(--text2)' }}>{artist.name}</div>
-            </div>
-            {tabs.map(t => (
-              <button key={t.id} onClick={() => { setTab(t.id); setSidebarOpen(false); }}
-                className={`nav-link ${tab === t.id ? 'active' : ''}`}>
-                <Icon name={t.icon} size={16} /> {t.label}
-              </button>
-            ))}
-            <div style={{ flex: 1 }} />
-            <button onClick={onLogout} className="nav-link" style={{ marginTop: 20, color: 'var(--red2)' }}>
-              <Icon name="logout" size={16} /> Logout
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Content */}
-      <div style={{ flex: 1, padding: '16px', maxWidth: 800, width: '100%', margin: '0 auto', paddingBottom: 80 }} className="page">
-        <div style={{ marginBottom: 16, fontWeight: 700, fontSize: 18 }}>
-          {tabs.find(t => t.id === tab)?.label}
-        </div>
-        {renderTab()}
-      </div>
-
-      {/* Bottom Nav */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'var(--bg2)', borderTop: '1px solid var(--border)', display: 'flex', padding: '8px 0', zIndex: 100 }}>
-        {bottomTabs.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '6px 0', background: 'none', border: 'none', color: tab === t.id ? 'var(--cyan)' : 'var(--text3)', cursor: 'pointer', transition: 'color .2s' }}>
-            <Icon name={t.icon} size={20} />
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+  return <WorkspaceShell tabs={tabs} tab={tab} onTab={setTab} onLogout={onLogout} name={artist.name}>{renderTab()}</WorkspaceShell>;
 }
 
 // ── Admin Login ────────────────────────────────────────────────────────────────
@@ -488,62 +357,12 @@ function AdminDashboard({ adminUser, onLogout }) {
     }
   }
 
-  return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--bg2)', borderBottom: '1px solid rgba(123,32,249,.35)', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button onClick={() => setSidebarOpen(s => !s)} className="btn btn-ghost btn-sm"><Icon name="menu" size={16} /></button>
-        <SoundoVaultLogo size={28} />
-        <div style={{ flex: 1 }} />
-        <Badge color="#A855F7">Admin</Badge>
-        <button onClick={onLogout} className="btn btn-ghost btn-sm"><Icon name="logout" size={14} /></button>
-      </div>
-
-      {/* Sidebar */}
-      {sidebarOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.6)' }} onClick={() => setSidebarOpen(false)} />
-          <div style={{ position: 'relative', width: 220, background: 'var(--bg2)', borderRight: '1px solid rgba(123,32,249,.25)', display: 'flex', flexDirection: 'column', padding: '20px 12px', zIndex: 1, overflowY: 'auto' }}>
-            <div style={{ marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
-              <Badge color="#A855F7">ADMIN — {adminUser}</Badge>
-            </div>
-            {tabs.map(t => (
-              <button key={t.id} onClick={() => { setTab(t.id); setSidebarOpen(false); }}
-                className={`nav-link ${tab === t.id ? 'active' : ''}`}
-                style={tab === t.id ? { borderColor: 'rgba(123,32,249,.35)', color: '#A855F7' } : {}}>
-                <Icon name={t.icon} size={16} /> {t.label}
-              </button>
-            ))}
-            <div style={{ flex: 1 }} />
-            <button onClick={onLogout} className="nav-link" style={{ marginTop: 20, color: '#A855F7' }}>
-              <Icon name="logout" size={16} /> Logout
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Content */}
-      <div style={{ flex: 1, padding: '16px', maxWidth: 1000, width: '100%', margin: '0 auto', paddingBottom: 80 }} className="page">
-        <div style={{ marginBottom: 16, fontWeight: 700, fontSize: 18 }}>
-          {tabs.find(t => t.id === tab)?.label}
-        </div>
-        {renderTab()}
-      </div>
-
-      {/* Bottom Nav */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'var(--bg2)', borderTop: '1px solid rgba(123,32,249,.25)', display: 'flex', padding: '8px 0', zIndex: 100 }}>
-        {tabs.slice(0, 5).map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '6px 0', background: 'none', border: 'none', color: tab === t.id ? '#A855F7' : 'var(--text3)', cursor: 'pointer', transition: 'color .2s' }}>
-            <Icon name={t.icon} size={20} />
-          </button>
-        ))}
-      </div>
-
-      {showAddDeal && <AddDealModal artists={artists} onAdd={setDeals} onClose={() => setShowAddDeal(false)} />}
-      {showAddArtist && <AddArtistModal onAdd={setArtists} onClose={() => setShowAddArtist(false)} />}
-    </div>
-  );
+  return <WorkspaceShell tabs={tabs} tab={tab} onTab={setTab} onLogout={onLogout} name={adminUser} admin>
+    {renderTab()}
+    {showAddDeal && <AddDealModal artists={artists} onAdd={setDeals} onClose={() => setShowAddDeal(false)} />}
+    {showAddArtist && <AddArtistModal onAdd={setArtists} onClose={() => setShowAddArtist(false)} />}
+    {editArtist && <AddArtistModal artist={editArtist} onAdd={setArtists} onClose={() => setEditArtist(null)} />}
+  </WorkspaceShell>;
 }
 
 // ── Root App ───────────────────────────────────────────────────────────────────
@@ -552,13 +371,13 @@ function AppInner() {
   const [artist, setArtist] = useState(null);
   const [adminUser, setAdminUser] = useState(null);
 
-  if (screen === 'splash') return <SplashPage onArtistLogin={() => setScreen('artistLogin')} onAdminTap={() => setScreen('adminLogin')} />;
+  if (screen === 'splash') return <SplashPage onArtistLogin={() => setScreen('artistLogin')} onAdminTap={() => setScreen('adminLogin')} onApply={() => setScreen('onboard')} />;
   if (screen === 'artistLogin') return <ArtistLogin onLogin={a => { setArtist(a); setScreen('portal'); }} onBack={() => setScreen('splash')} />;
   if (screen === 'onboard') return <ArtistOnboard onComplete={() => setScreen('splash')} />;
   if (screen === 'adminLogin') return <AdminLogin onLogin={u => { setAdminUser(u); setScreen('admin'); }} onBack={() => setScreen('splash')} />;
   if (screen === 'portal' && artist) return <ArtistPortal artist={artist} onLogout={() => { setArtist(null); setScreen('splash'); }} />;
   if (screen === 'admin' && adminUser) return <AdminDashboard adminUser={adminUser} onLogout={() => { setAdminUser(null); setScreen('splash'); }} />;
-  return <SplashPage onArtistLogin={() => setScreen('artistLogin')} onAdminTap={() => setScreen('adminLogin')} />;
+  return <SplashPage onArtistLogin={() => setScreen('artistLogin')} onAdminTap={() => setScreen('adminLogin')} onApply={() => setScreen('onboard')} />;
 }
 
 export default function App() {

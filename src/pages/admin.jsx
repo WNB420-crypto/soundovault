@@ -432,23 +432,23 @@ export function AddDealModal({ artists, onAdd, onClose }) {
   );
 }
 
-export function AddArtistModal({ onAdd, onClose }) {
-  const [form, setForm] = useState({ name: '', email: '', genre: '', stage: 'Development', bio: '', streams: '', followers: '', growth: '', dealValue: '', color: '#7c3aed' });
+export function AddArtistModal({ artist = null, onAdd, onClose }) {
+  const [form, setForm] = useState(artist ? { ...artist } : { name: '', email: '', genre: '', stage: 'Development', bio: '', streams: '', followers: '', growth: '', dealValue: '', color: '#7c3aed' });
   const toast = useToast();
 
   async function submit() {
     if (!form.name || !form.email) { toast('Name and email are required', 'error'); return; }
     const artists = await sget(KEYS.artists) || SEED_ARTISTS;
     const newArtist = { ...form, id: 'a' + Date.now(), streams: Number(form.streams) || 0, followers: Number(form.followers) || 0, growth: Number(form.growth) || 0, dealValue: Number(form.dealValue) || 0, joinDate: new Date().toISOString().split('T')[0], weeklyReport: null, socials: {} };
-    const updated = [...artists, newArtist];
+    const updated = artist ? artists.map(a => a.id === artist.id ? { ...a, ...form, id: a.id, streams: Number(form.streams) || 0, followers: Number(form.followers) || 0, growth: Number(form.growth) || 0, dealValue: Number(form.dealValue) || 0 } : a) : [...artists, newArtist];
     await sset(KEYS.artists, updated);
     onAdd(updated);
-    toast('Artist added!', 'success');
+    toast(artist ? 'Artist updated!' : 'Artist added!', 'success');
     onClose();
   }
 
   return (
-    <Modal title="Add Artist" onClose={onClose}>
+    <Modal title={artist ? "Edit Artist" : "Add Artist"} onClose={onClose}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <Row gap={12}>
           <Field label="Artist Name *" style={{ flex: 1 }}>
@@ -490,7 +490,7 @@ export function AddArtistModal({ onAdd, onClose }) {
         </Field>
         <Row gap={10} style={{ justifyContent: 'flex-end', marginTop: 8 }}>
           <button onClick={onClose} className="btn btn-ghost">Cancel</button>
-          <button onClick={submit} className="btn btn-primary"><Icon name="plus" size={14} /> Add Artist</button>
+          <button onClick={submit} className="btn btn-primary"><Icon name={artist ? "check" : "plus"} size={14} /> {artist ? "Save Changes" : "Add Artist"}</button>
         </Row>
       </div>
     </Modal>

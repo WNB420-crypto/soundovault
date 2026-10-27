@@ -26,7 +26,7 @@ export function PortalOverview({ artist, onTab }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ background: `linear-gradient(135deg, ${artist.color}22, ${artist.color}08)`, border: `1px solid ${artist.color}44`, borderRadius: 16, padding: 24 }}>
+      <div className="sv-welcome" style={{ background: `linear-gradient(135deg, ${artist.color}22, ${artist.color}08)`, border: `1px solid ${artist.color}44`, borderRadius: 16, padding: 24 }}>
         <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>Welcome back, {artist.name} 👋</div>
         <div style={{ color: 'var(--text2)', fontSize: 15 }}>{artist.genre} • Joined {formatDate(artist.joinDate)}</div>
       </div>
