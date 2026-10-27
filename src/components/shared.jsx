@@ -176,62 +176,42 @@ export function Icon({ name, size = 18, color, className = '', strokeWidth = 2 }
 
 // ── Logo ──────────────────────────────────────────────────────────────────────
 export function SoundoVaultLogo({ size = 48, showText = true }) {
-  const uid = 'sv';
+  // Use official brand asset — horizontal lockup on dark (SVG with embedded real symbol PNG)
+  // The horizontal SVG is 1100×240 viewBox; scale to desired height keeping aspect ratio
+  const logoH = size * 1.1;
+  const logoW = logoH * (1100 / 240);
+
+  if (showText) {
+    // Full horizontal lockup: real symbol + wordmark
+    return (
+      <img
+        src="/assets/logos/soundovault-horizontal-on-dark.svg"
+        alt="SoundoVault"
+        height={logoH}
+        width={logoW}
+        style={{
+          display: 'block',
+          filter: 'drop-shadow(0 0 12px rgba(22,93,255,0.4))',
+          flexShrink: 0,
+        }}
+      />
+    );
+  }
+
+  // Symbol only — use the standalone PNG emblem
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-      {/* Folded ribbon mark — inspired by brand kit */}
-      <div style={{ width: size, height: size, flexShrink: 0, animation: 'float 5s ease-in-out infinite' }}>
-        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}
-          style={{ filter: 'drop-shadow(0 0 14px rgba(22,93,255,0.55))' }}>
-          <defs>
-            <linearGradient id={`${uid}g1`} x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#00D4F5"/>
-              <stop offset="50%" stopColor="#165DFF"/>
-              <stop offset="100%" stopColor="#7B20F9"/>
-            </linearGradient>
-            <linearGradient id={`${uid}g2`} x1="200" y1="0" x2="0" y2="200" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#7B20F9"/>
-              <stop offset="50%" stopColor="#165DFF"/>
-              <stop offset="100%" stopColor="#00D4F5"/>
-            </linearGradient>
-            <linearGradient id={`${uid}g3`} x1="50" y1="50" x2="150" y2="150" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#00D4F5" stopOpacity="0.9"/>
-              <stop offset="100%" stopColor="#165DFF" stopOpacity="0.6"/>
-            </linearGradient>
-          </defs>
-          {/* Outer ribbon loop — top-left curve */}
-          <path d="M100 30 C60 30 30 60 30 100 C30 125 42 147 62 160 L80 148 C65 138 56 120 56 100 C56 74 74 56 100 56 L100 30Z"
-            fill={`url(#${uid}g1)`} opacity="0.95"/>
-          {/* Outer ribbon loop — bottom-right curve */}
-          <path d="M100 170 C140 170 170 140 170 100 C170 75 158 53 138 40 L120 52 C135 62 144 80 144 100 C144 126 126 144 100 144 L100 170Z"
-            fill={`url(#${uid}g2)`} opacity="0.95"/>
-          {/* Inner V ribbon */}
-          <path d="M68 68 L100 140 L132 68 L118 68 L100 112 L82 68Z"
-            fill={`url(#${uid}g3)`}/>
-          {/* Highlight sheen */}
-          <path d="M100 30 L100 56 C115 56 128 62 137 72 L155 58 C141 42 122 30 100 30Z"
-            fill="#00D4F5" opacity="0.4"/>
-        </svg>
-      </div>
-      {showText && (
-        <div>
-          <div style={{
-            fontFamily: "'Space Grotesk','Inter',sans-serif",
-            fontWeight: 700,
-            fontSize: size * 0.42,
-            letterSpacing: '-0.01em',
-            lineHeight: 1,
-          }}>
-            <span style={{ color: '#F5F7FC' }}>Soundo</span>
-            <span style={{
-              background: 'linear-gradient(135deg,#00D4F5,#165DFF,#7B20F9)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
-            }}>Vault</span>
-          </div>
-          <div style={{ fontSize: size * 0.18, letterSpacing: '0.22em', color: 'var(--text3)', fontWeight: 600, marginTop: 2, textTransform: 'uppercase' }}>POWERED BY VNC</div>
-        </div>
-      )}
-    </div>
+    <img
+      src="/assets/logos/soundovault-symbol.png"
+      alt="SoundoVault"
+      width={size}
+      height={size}
+      style={{
+        display: 'block',
+        objectFit: 'contain',
+        filter: 'drop-shadow(0 0 10px rgba(22,93,255,0.5))',
+        flexShrink: 0,
+      }}
+    />
   );
 }
 
